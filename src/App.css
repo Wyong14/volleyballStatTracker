@@ -71,5 +71,13 @@
   width: 100%;
 }
 
+.scoring-data {
+  display: flex;
+  flex-direction: row;
+  margin-left: 10px; /* Add left margin */
+  margin-right: 10px; /* Add right margin */
+  width: 100%;
+  justify-content: space-evenly;
+}
 
 

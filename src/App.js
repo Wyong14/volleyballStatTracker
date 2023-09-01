@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
@@ -8,45 +8,69 @@ function App() {
   const [numOpponentSet, setNumOpponentSet] = useState(0);
   const [title, setTitle] = useState('Spiking Saints VS');
   const [scoringData, setScoringData] = useState({});
+  const [selectedOpponentPosition, setSelectedOpponentPosition] = useState('');
+  const [selectedPosition, setSelectedPosition] = useState('');
+
   const numRows = 2;
   const numCols = 3;
 
-  const renderGrid = () => {
+  const renderGrid = (type) => {
     const grid = [];
-
+  
     let num = 1;
-
+  
     for (let row = 0; row < numRows; row++) {
       const rowButtons = [];
       for (let col = 0; col < numCols; col++) {
-        const number = renderNumber(row, col, num);
+        let position;
+        let isSelected; 
+      
+        if (type === 'SS') {
+          position = renderNumber(row, col);
+          isSelected = position === selectedPosition
+        } else if (type === 'OT') {
+          position = renderPosition(row, col);
+          isSelected = position === selectedOpponentPosition
+        }
+
         rowButtons.push(
           <button
             key={col}
             className="grid-button"
-          >
-            {number}
+            onClick={() => type === 'SS' ? setSelectedPosition(position) : setSelectedOpponentPosition(position)}
+            style={{ backgroundColor: isSelected ? 'white' : '#3498db' }}
+            >
+            {position}
           </button>
         );
         num++;
       }
       grid.push(<div key={row} className="grid-row">{rowButtons}</div>);
     }
-
+  
     return grid;
   };
+  
 
-  const renderNumber = (row, col, number) => {
+  const renderNumber = (row, col) => {
     if (row === 0 && col === 0) return 4;
     if (row === 0 && col === numCols - 1) return 2;
     if (row === numRows - 1 && col === 0) return 5;
     if (row === numRows - 1 && col === numCols - 1) return 1;
     if (row === numRows - 1 && col === Math.floor(numCols / 2)) return 6;
     if (row === 0 && col === Math.floor(numCols / 2)) return 3;
-    return number;
   };
 
-  const handleScoreChange = (scoredBySS, scoredBy, number) => {
+  const renderPosition = (row, col) => {
+    if (row === 0 && col === 0) return 'BL';
+    if (row === 0 && col === numCols - 1) return 'BR';
+    if (row === numRows - 1 && col === 0) return 'FL';
+    if (row === numRows - 1 && col === numCols - 1) return 'FR';
+    if (row === numRows - 1 && col === Math.floor(numCols / 2)) return 'FM';
+    if (row === 0 && col === Math.floor(numCols / 2)) return 'BM';
+  };
+
+  const handleScoreChange = (scoredBySS, scoredBy) => {
     setScore((prevScore) => prevScore + (scoredBySS ? 1 : 0));
     setOpponentScore((prevOpponentScore) => prevOpponentScore + (scoredBySS ? 0 : 1));
 
@@ -60,20 +84,16 @@ function App() {
     });
   };
 
-  useEffect(() => {
-    console.log(scoringData);
-  }, [scoringData]);
-
   // Function to render the scoring data
   const renderScoringData = () => {
     return (
       <div className="scoring-data">
         {Object.keys(scoringData).map((setNumber) => (
-          <div key={setNumber}>
+          <div style={{ margin: '1vw' }} key={setNumber}>
             <h4>Set {setNumber}:</h4>
             {scoringData[setNumber].map((point, index) => (
               <div key={index}>
-                {index + 1}: {point}
+                {point}
               </div>
             ))}
           </div>
@@ -82,13 +102,25 @@ function App() {
     );
   };
 
+  const handleEndSet = () => {
+    // whichever has a higher current score won the set 
+    if (score > opponentScore) { // we won the set 
+      setNumSet(numSet + 1)
+    } else { // opponent won the set
+      setNumOpponentSet(numOpponentSet + 1)
+    }
+
+    // Reset the current scores 
+    setScore(0)
+    setOpponentScore(0)
+  }
   return (
     <div className="App">
       <div className="Scoring">
         <input
           type="text"
           className='scoring-title'
-          style={{ width: '90%', fontWeight: 'bold', margin: '2vw', caretColor: 'black'}}
+          style={{ width: '90%', fontWeight: 'bold', margin: '2vw', caretColor: 'black' }}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -115,7 +147,7 @@ function App() {
         </div>
         <div>
           <button className='scoring-button' style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>REVIEW</button>
-          <button className='scoring-button' style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>END SET</button>
+          <button className='scoring-button' onClick={() => handleEndSet()} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>END SET</button>
           <button className='scoring-button' style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>END MATCH</button>
         </div>
         <div className="current-score">
@@ -124,14 +156,17 @@ function App() {
           <h2 className='scoring-title'>Sets :</h2>
           <h2 id='sets' className='scoring-title'>[{numSet}] | [{numOpponentSet}]</h2>
         </div>
+          <h2 className='scoring-title'>Currently Selected Position: {selectedPosition}</h2>
+          <h2 className='scoring-title'>Currently Selected Opponent Position: {selectedOpponentPosition}</h2>
+          <button className='scoring-button' onClick={() => console.log('Confirm')} style={{ backgroundColor: '#6fff79', width: 'auto', fontSize: '2rem' }}>CONFIRM</button>
         {/* Render the scoring data */}
         {renderScoringData()}
       </div>
       <div className="App-header">
         <h3>Other Team</h3>
-        {renderGrid()}
+        {renderGrid('OT')}
         <h3>-----Net-----</h3>
-        {renderGrid()}
+        {renderGrid('SS')}
         <h3>Spiking Saints</h3>
       </div>
     </div >
