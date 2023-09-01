@@ -1,0 +1,83 @@
+.App {
+  display: flex;
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  width: 50vw;
+}
+
+.Scoring {
+  background-color: #e1e1e1;
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.grid-row {
+  display: flex;
+  justify-content: center;
+}
+
+.grid-button {
+  width: 15vw;
+  height: 15vh;
+  background-color: #3498db;
+  font-size: 2rem;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.grid-button:hover {
+  background-color: lightblue;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.scoring-button {
+  width: 7vw;
+  height: 4vw;
+  margin: 2vh;
+  font-size: 3rem;
+  border: 4px solid #000; /* Black border */
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.scoring-title {
+  font-size: 2.5rem;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+  -webkit-text-stroke: 3px #000; /* Black outline */
+  color: white; /* White text color */
+  font-weight: bold;
+}
+
+.current-score {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.scoring-data {
+  display: flex;
+  flex-direction: row;
+  margin-left: 10px; /* Add left margin */
+  margin-right: 10px; /* Add right margin */
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+
