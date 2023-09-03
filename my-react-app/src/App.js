@@ -234,29 +234,22 @@ function App() {
           </h2>
         </div>
         <div>
-          <h2 className='scoring-title'>Confirm Point Details:</h2>
+          <h2 className='scoring-title' style={{marginTop: '0px', marginBottom: '0px'}}>Confirm Point Details:</h2>
           <table class='confirm-table' border="1">
             <tr>
-              <th><div class='scoring-button' style={{ fontSize: '2rem', width: '10vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0 }}>Point Scorer</div></th>
-              <th><div class='scoring-button' style={{ fontSize: '2rem', width: '10vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0 }}>Point for Spiking Saints?</div></th>
-              <th><div class='scoring-button' style={{ fontSize: '2rem', width: '10vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0 }}>Currently Selected Position</div></th>
-              <th><div class='scoring-button' style={{ fontSize: '2rem', width: '10vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0 }}>Currently Selected Opponent Position</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw'}}>Point Scorer</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw'}}>Point for Spiking Saints?</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw'}}>Currently Selected Position</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw'}}>Currently Selected Opponent Position</div></th>
             </tr>
             <tr>
-              <td><div style={{ fontSize: '2rem', width: '10vw', marginLeft: '0.9vw' }}>{pointScorer}</div></td>
-              <td><div style={{ fontSize: '2rem', width: '10vw', marginLeft: '0.9vw' }}>{pointForSS ? 'Yes' : 'No'}</div></td>
-              <td><div style={{ fontSize: '2rem', width: '10vw', marginLeft: '0.9vw' }}>{selectedPosition}</div></td>
-              <td><div style={{ fontSize: '2rem', width: '10vw', marginLeft: '0.9vw' }}>{selectedOpponentPosition}</div></td>
+              <td><div style={{ fontSize: '1rem', width: '9.5vw', marginLeft: '0.9vw' }}>{pointScorer}</div></td>
+              <td><div style={{ fontSize: '1rem', width: '9.5vw', marginLeft: '0.9vw' }}>{pointForSS ? 'Yes' : 'No'}</div></td>
+              <td><div style={{ fontSize: '1rem', width: '9.5vw', marginLeft: '0.9vw' }}>{selectedPosition}</div></td>
+              <td><div style={{ fontSize: '1rem', width: '9.5vw', marginLeft: '0.9vw' }}>{selectedOpponentPosition}</div></td>
             </tr>
           </table>
         </div>
-        {/* <div>Generated Code:
-          {pointForSS ? (
-            CONCAT THE DATA OWEN WANTS 
-          ) : (
-            REVERSE THE ORDER?
-          )}
-        </div> */}
         <button className='scoring-button' onClick={() => confirmScoreChange()} style={{ backgroundColor: '#6fff79', width: 'auto', fontSize: '2rem' }}>CONFIRM</button>
         {/* Render the scoring data */}
         {renderScoringData()}
