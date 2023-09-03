@@ -177,11 +177,23 @@ function App() {
             <span style={{ color: '#f4acac' }}> [{numOpponentSet}]</span>
           </h2>
         </div>
-        <h2 className='scoring-title'>Confirm Point Details:</h2>
-        <div>Point Scorer: {pointScorer}</div>
-        <div>Point for Spiking Saints? {pointForSS ? 'Yes' : 'No'}</div>
-        <div>Currently Selected Position: {selectedPosition}</div>
-        <div>Currently Selected Opponent Position: {selectedOpponentPosition}</div>
+        <div>
+          <h2 className='scoring-title'>Confirm Point Details:</h2>
+          <table class='confirm-table' border="1">
+            <tr>
+              <th><div class='scoring-button' style={{ fontSize: '2rem', width: '10vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0 }}>Point Scorer</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '2rem', width: '10vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0 }}>Point for Spiking Saints?</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '2rem', width: '10vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0 }}>Currently Selected Position</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '2rem', width: '10vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0 }}>Currently Selected Opponent Position</div></th>
+            </tr>
+            <tr>
+              <td><div style={{ fontSize: '2rem', width: '10vw', marginLeft: '0.9vw' }}>{pointScorer}</div></td>
+              <td><div style={{ fontSize: '2rem', width: '10vw', marginLeft: '0.9vw' }}>{pointForSS ? 'Yes' : 'No'}</div></td>
+              <td><div style={{ fontSize: '2rem', width: '10vw', marginLeft: '0.9vw' }}>{selectedPosition}</div></td>
+              <td><div style={{ fontSize: '2rem', width: '10vw', marginLeft: '0.9vw' }}>{selectedOpponentPosition}</div></td>
+            </tr>
+          </table>
+        </div>
         {/* <div>Generated Code:
           {pointForSS ? (
             CONCAT THE DATA OWEN WANTS 

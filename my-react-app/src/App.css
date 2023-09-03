@@ -81,4 +81,10 @@
   justify-content: space-evenly;
 }
 
-
+.confirm-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  border: 4px solid #000;
+  text-align: 'center';
+}
