@@ -1,4 +1,5 @@
 # volleyballStatTracker
-go to my-react-app and run: 
-- npm install
-- npm start
+1. Clone the repo
+2. Navigate to volleyballStatTracker/my-react-app 
+3. run $ npm install
+4. run $ npm start 
