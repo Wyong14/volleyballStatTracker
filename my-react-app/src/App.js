@@ -86,12 +86,58 @@ function App() {
 
     setScoringData((prevScoringData) => {
       const currentSet = numSet + numOpponentSet + 1;
+      let generatedCode; 
+      // OTMP 
+      if (pointScorer === 'OTMP') {
+        generatedCode = `${pointScorer}(${selectedPosition}AF)`
+      }
+
+      // OTMS missed serve button 
+      else if (selectedPosition === 'MS') {  
+        generatedCode = `OTMS (${pointScorer})`
+      }
+      // OTOP 
+      else if (pointScorer === 'OTOP') {
+        let mirroredPosition; 
+        if (selectedOpponentPosition === 'BL') {
+          mirroredPosition = '5M'
+        } else if (selectedOpponentPosition === 'BR') {
+          mirroredPosition = '1M'
+        } else if (selectedOpponentPosition === 'FL') {
+          mirroredPosition = '4M'
+        } else if (selectedOpponentPosition === 'FR') {
+          mirroredPosition = '2M'
+        } else if (selectedOpponentPosition === 'FM') {
+          mirroredPosition = '3M'
+        } else if (selectedOpponentPosition === 'BM') {
+          mirroredPosition = '6M'
+        }
+        generatedCode = `${pointScorer} (${mirroredPosition}/${selectedPosition}DF)`
+
+      }
+      // FRMB or OTMB 
+      else if (pointScorer === 'FRMB' || pointScorer === 'OTMB') {
+        generatedCode = pointScorer
+      }
+      
+      // Friendly Point 
+      else {
+        // Serve 
+        if (selectedPosition === 'SE') {
+          generatedCode = `${pointScorer} (SE/${selectedOpponentPosition})`
+        }
+        // Other 
+        else {
+          generatedCode = `${pointScorer} (${selectedPosition}A/${selectedOpponentPosition})`
+        }
+      }
 
       return {
         ...prevScoringData,
-        [currentSet]: [...(prevScoringData[currentSet] || []), `${pointScorer} (${selectedPosition}/${selectedOpponentPosition})`],
+        [currentSet]: [...(prevScoringData[currentSet] || []), generatedCode],
       };
     });
+
 
     // Reset current scorer, positions etc. 
     setPointScorer('')
@@ -128,6 +174,16 @@ function App() {
     // Reset the current scores 
     setScore(0)
     setOpponentScore(0)
+  }
+
+  const handleServes = (pointForSS) => {
+    if (pointForSS) { // service point
+      setSelectedPosition('SE')
+      setPointForSS(true)
+    } else { // Missed Serve
+      setSelectedPosition('MS')
+      setPointForSS(false)
+    }
   }
   return (
     <div className="App">
@@ -199,6 +255,11 @@ function App() {
         <h3>-----Net-----</h3>
         {renderGrid('SS')}
         <h3>Spiking Saints</h3>
+        {/* SERVES */}
+        <div style={{display: 'flex'}}>
+          <button className='scoring-button' onClick={() => handleServes(true)} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>SE</button>
+          <button className='scoring-button' onClick={() => handleServes(false)} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>MS</button>
+        </div>
       </div>
     </div >
   );
