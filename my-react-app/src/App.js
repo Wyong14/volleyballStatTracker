@@ -269,8 +269,8 @@ function App() {
         <h3>Spiking Saints</h3>
         {/* SERVES */}
         <div style={{display: 'flex'}}>
-          <button className='scoring-button' onClick={() => handleServes(true)} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>SE</button>
-          <button className='scoring-button' onClick={() => handleServes(false)} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>MS</button>
+          <button className='scoring-button' onClick={() => handleServes(true)} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem', width: '20vw' }}>SE</button>
+          <button className='scoring-button' onClick={() => handleServes(false)} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem', width: '20vw' }}>MS</button>
         </div>
       </div>
     </div >
