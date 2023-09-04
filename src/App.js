@@ -10,21 +10,23 @@ function App() {
   const [scoringData, setScoringData] = useState({});
   const [selectedOpponentPosition, setSelectedOpponentPosition] = useState('');
   const [selectedPosition, setSelectedPosition] = useState('');
+  const [pointScorer, setPointScorer] = useState('');
+  const [pointForSS, setPointForSS] = useState(true);
 
   const numRows = 2;
   const numCols = 3;
 
   const renderGrid = (type) => {
     const grid = [];
-  
+
     let num = 1;
-  
+
     for (let row = 0; row < numRows; row++) {
       const rowButtons = [];
       for (let col = 0; col < numCols; col++) {
         let position;
-        let isSelected; 
-      
+        let isSelected;
+
         if (type === 'SS') {
           position = renderNumber(row, col);
           isSelected = position === selectedPosition
@@ -38,19 +40,22 @@ function App() {
             key={col}
             className="grid-button"
             onClick={() => type === 'SS' ? setSelectedPosition(position) : setSelectedOpponentPosition(position)}
-            style={{ backgroundColor: isSelected ? 'white' : '#3498db' }}
-            >
+            style={{
+              backgroundColor: isSelected ? 'white' : type === 'SS' ? '#d0f8bd' : type === 'OT' ? '#f5b5b7' : 'black'
+            }}
+          >
             {position}
           </button>
         );
+
         num++;
       }
       grid.push(<div key={row} className="grid-row">{rowButtons}</div>);
     }
-  
+
     return grid;
   };
-  
+
 
   const renderNumber = (row, col) => {
     if (row === 0 && col === 0) return 4;
@@ -70,20 +75,92 @@ function App() {
     if (row === 0 && col === Math.floor(numCols / 2)) return 'BM';
   };
 
-  const handleScoreChange = (scoredBySS, scoredBy) => {
-    setScore((prevScore) => prevScore + (scoredBySS ? 1 : 0));
-    setOpponentScore((prevOpponentScore) => prevOpponentScore + (scoredBySS ? 0 : 1));
+  const handleScoreChange = (pointForSS, scoredBy) => {
+    setPointScorer(scoredBy)
+    setPointForSS(pointForSS)
+  };
+
+  // Function to undo the last entry from the current set in scoringData
+  const undoPreviousPoint = () => {
+    const currentSet = numSet + numOpponentSet + 1;
+    if (scoringData[currentSet] && scoringData[currentSet].length > 0) {
+      scoringData[currentSet].pop();
+      setScoringData({ ...scoringData });
+    }
+
+    // update the score changes 
+    if (pointForSS) {
+      setScore(score - 1)
+    } else {
+      setOpponentScore(opponentScore - 1)
+    } 
+  };
+
+  const confirmScoreChange = () => {
+    setScore((prevScore) => prevScore + (pointForSS ? 1 : 0));
+    setOpponentScore((prevOpponentScore) => prevOpponentScore + (pointForSS ? 0 : 1));
 
     setScoringData((prevScoringData) => {
       const currentSet = numSet + numOpponentSet + 1;
+      let generatedCode;
+      // OTMP 
+      if (pointScorer === 'OTMP') {
+        generatedCode = `${pointScorer}(${selectedPosition}AF)`
+      }
+
+      // OTMS missed serve button 
+      else if (selectedPosition === 'MS') {
+        generatedCode = `OTMS (${pointScorer})`
+      }
+      // OTOP 
+      else if (pointScorer === 'OTOP') {
+        let mirroredPosition;
+        if (selectedOpponentPosition === 'BL') {
+          mirroredPosition = '5M'
+        } else if (selectedOpponentPosition === 'BR') {
+          mirroredPosition = '1M'
+        } else if (selectedOpponentPosition === 'FL') {
+          mirroredPosition = '4M'
+        } else if (selectedOpponentPosition === 'FR') {
+          mirroredPosition = '2M'
+        } else if (selectedOpponentPosition === 'FM') {
+          mirroredPosition = '3M'
+        } else if (selectedOpponentPosition === 'BM') {
+          mirroredPosition = '6M'
+        }
+        generatedCode = `${pointScorer} (${mirroredPosition}/${selectedPosition}DF)`
+
+      }
+      // FRMB or OTMB 
+      else if (pointScorer === 'FRMB' || pointScorer === 'OTMB') {
+        generatedCode = pointScorer
+      }
+
+      // Friendly Point 
+      else {
+        // Serve 
+        if (selectedPosition === 'SE') {
+          generatedCode = `${pointScorer} (SE/${selectedOpponentPosition})`
+        }
+        // Other 
+        else {
+          generatedCode = `${pointScorer} (${selectedPosition}A/${selectedOpponentPosition})`
+        }
+      }
 
       return {
         ...prevScoringData,
-        [currentSet]: [...(prevScoringData[currentSet] || []), scoredBy],
+        [currentSet]: [...(prevScoringData[currentSet] || []), generatedCode],
       };
     });
-  };
 
+
+    // Reset current scorer, positions etc. 
+    setPointScorer('')
+    setPointForSS(pointForSS)
+    setSelectedOpponentPosition('')
+    setSelectedPosition('')
+  }
   // Function to render the scoring data
   const renderScoringData = () => {
     return (
@@ -113,6 +190,16 @@ function App() {
     // Reset the current scores 
     setScore(0)
     setOpponentScore(0)
+  }
+
+  const handleServes = (pointForSS) => {
+    if (pointForSS) { // service point
+      setSelectedPosition('SE')
+      setPointForSS(true)
+    } else { // Missed Serve
+      setSelectedPosition('MS')
+      setPointForSS(false)
+    }
   }
   return (
     <div className="App">
@@ -146,19 +233,40 @@ function App() {
           <button className='scoring-button scoring-title' onClick={() => handleScoreChange(false, 'OTMB')} style={{ backgroundColor: '#ffadad', width: 'auto' }}>OTMB</button>
         </div>
         <div>
-          <button className='scoring-button' style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>REVIEW</button>
+          <button className='scoring-button' onClick={() => undoPreviousPoint()}style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>UNDO</button>
           <button className='scoring-button' onClick={() => handleEndSet()} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>END SET</button>
           <button className='scoring-button' style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>END MATCH</button>
         </div>
         <div className="current-score">
           <h2 className='scoring-title'>Current Score :</h2>
-          <h2 id='score' className='scoring-title'>[{score}] | [{opponentScore}]</h2>
+          <h2 id='score' className='scoring-title'>
+            <span style={{ color: '#dff6c5' }}>[{score}]</span> |
+            <span style={{ color: '#f4acac' }}> [{opponentScore}]</span>
+          </h2>
           <h2 className='scoring-title'>Sets :</h2>
-          <h2 id='sets' className='scoring-title'>[{numSet}] | [{numOpponentSet}]</h2>
+          <h2 id='sets' className='scoring-title'>
+            <span style={{ color: '#dff6c5' }}>[{numSet}]</span> |
+            <span style={{ color: '#f4acac' }}> [{numOpponentSet}]</span>
+          </h2>
         </div>
-          <h2 className='scoring-title'>Currently Selected Position: {selectedPosition}</h2>
-          <h2 className='scoring-title'>Currently Selected Opponent Position: {selectedOpponentPosition}</h2>
-          <button className='scoring-button' onClick={() => console.log('Confirm')} style={{ backgroundColor: '#6fff79', width: 'auto', fontSize: '2rem' }}>CONFIRM</button>
+        <div>
+          <h2 className='scoring-title' style={{ marginTop: '0px', marginBottom: '0px' }}>Confirm Point Details:</h2>
+          <table class='confirm-table' border="1">
+            <tr>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw' }}>Point Scorer</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw' }}>Point for Spiking Saints?</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw' }}>Currently Selected Position</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw' }}>Currently Selected Opponent Position</div></th>
+            </tr>
+            <tr>
+              <td><div style={{ fontSize: '1rem', width: '9.5vw', marginLeft: '0.9vw' }}>{pointScorer}</div></td>
+              <td><div style={{ fontSize: '1rem', width: '9.5vw', marginLeft: '0.9vw' }}>{pointForSS ? 'Yes' : 'No'}</div></td>
+              <td><div style={{ fontSize: '1rem', width: '9.5vw', marginLeft: '0.9vw' }}>{selectedPosition}</div></td>
+              <td><div style={{ fontSize: '1rem', width: '9.5vw', marginLeft: '0.9vw' }}>{selectedOpponentPosition}</div></td>
+            </tr>
+          </table>
+        </div>
+        <button className='scoring-button' onClick={() => confirmScoreChange()} style={{ backgroundColor: '#6fff79', width: 'auto', fontSize: '2rem' }}>CONFIRM</button>
         {/* Render the scoring data */}
         {renderScoringData()}
       </div>
@@ -168,6 +276,11 @@ function App() {
         <h3>-----Net-----</h3>
         {renderGrid('SS')}
         <h3>Spiking Saints</h3>
+        {/* SERVES */}
+        <div style={{ display: 'flex' }}>
+          <button className='scoring-button' onClick={() => handleServes(true)} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem', width: '20vw' }}>SE</button>
+          <button className='scoring-button' onClick={() => handleServes(false)} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem', width: '20vw' }}>MS</button>
+        </div>
       </div>
     </div >
   );
