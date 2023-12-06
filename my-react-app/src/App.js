@@ -80,25 +80,41 @@ function App() {
     setPointForSS(pointForSS)
   };
 
+  // Function to undo the last entry from the current set in scoringData
+  const undoPreviousPoint = () => {
+    const currentSet = numSet + numOpponentSet + 1;
+    if (scoringData[currentSet] && scoringData[currentSet].length > 0) {
+      scoringData[currentSet].pop();
+      setScoringData({ ...scoringData });
+    }
+
+    // update the score changes 
+    if (pointForSS) {
+      setScore(score - 1)
+    } else {
+      setOpponentScore(opponentScore - 1)
+    } 
+  };
+
   const confirmScoreChange = () => {
     setScore((prevScore) => prevScore + (pointForSS ? 1 : 0));
     setOpponentScore((prevOpponentScore) => prevOpponentScore + (pointForSS ? 0 : 1));
 
     setScoringData((prevScoringData) => {
       const currentSet = numSet + numOpponentSet + 1;
-      let generatedCode; 
+      let generatedCode;
       // OTMP 
       if (pointScorer === 'OTMP') {
         generatedCode = `${pointScorer}(${selectedPosition}AF)`
       }
 
       // OTMS missed serve button 
-      else if (selectedPosition === 'MS') {  
+      else if (selectedPosition === 'MS') {
         generatedCode = `OTMS (${pointScorer})`
       }
       // OTOP 
       else if (pointScorer === 'OTOP') {
-        let mirroredPosition; 
+        let mirroredPosition;
         if (selectedOpponentPosition === 'BL') {
           mirroredPosition = '5M'
         } else if (selectedOpponentPosition === 'BR') {
@@ -119,7 +135,7 @@ function App() {
       else if (pointScorer === 'FRMB' || pointScorer === 'OTMB') {
         generatedCode = pointScorer
       }
-      
+
       // Friendly Point 
       else {
         // Serve 
@@ -217,7 +233,7 @@ function App() {
           <button className='scoring-button scoring-title' onClick={() => handleScoreChange(false, 'OTMB')} style={{ backgroundColor: '#ffadad', width: 'auto' }}>OTMB</button>
         </div>
         <div>
-          <button className='scoring-button' style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>REVIEW</button>
+          <button className='scoring-button' onClick={() => undoPreviousPoint()}style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>UNDO</button>
           <button className='scoring-button' onClick={() => handleEndSet()} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>END SET</button>
           <button className='scoring-button' style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem' }}>END MATCH</button>
         </div>
@@ -234,13 +250,13 @@ function App() {
           </h2>
         </div>
         <div>
-          <h2 className='scoring-title' style={{marginTop: '0px', marginBottom: '0px'}}>Confirm Point Details:</h2>
+          <h2 className='scoring-title' style={{ marginTop: '0px', marginBottom: '0px' }}>Confirm Point Details:</h2>
           <table class='confirm-table' border="1">
             <tr>
-              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw'}}>Point Scorer</div></th>
-              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw'}}>Point for Spiking Saints?</div></th>
-              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw'}}>Currently Selected Position</div></th>
-              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw'}}>Currently Selected Opponent Position</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw' }}>Point Scorer</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw' }}>Point for Spiking Saints?</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw' }}>Currently Selected Position</div></th>
+              <th><div class='scoring-button' style={{ fontSize: '1rem', width: '9.5vw', alignItems: 'center', justifyContent: 'center', display: 'flex', border: 0, height: '1vw' }}>Currently Selected Opponent Position</div></th>
             </tr>
             <tr>
               <td><div style={{ fontSize: '1rem', width: '9.5vw', marginLeft: '0.9vw' }}>{pointScorer}</div></td>
@@ -261,7 +277,7 @@ function App() {
         {renderGrid('SS')}
         <h3>Spiking Saints</h3>
         {/* SERVES */}
-        <div style={{display: 'flex'}}>
+        <div style={{ display: 'flex' }}>
           <button className='scoring-button' onClick={() => handleServes(true)} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem', width: '20vw' }}>SE</button>
           <button className='scoring-button' onClick={() => handleServes(false)} style={{ backgroundColor: 'white', width: 'auto', fontSize: '2rem', width: '20vw' }}>MS</button>
         </div>
